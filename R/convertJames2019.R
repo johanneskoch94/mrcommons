@@ -13,19 +13,19 @@
 #' @importFrom countrycode countrycode
 #' @importFrom mstools toolHoldConstant 
 
-convertJames2019 <- function(x,subtype) {
-  x<-x[c("USSR_FRMR","CHN_354","CHN_361"),,,invert=TRUE] #Macao and HKG and Former USSR have 0 values in the dataset
-  x<-toolCountryFill(x[,,subtype],fill = 0) 
+convertJames2019 <- function(x, subtype) {
+  x <- x[c("USSR_FRMR","CHN_354","CHN_361"),,,invert = TRUE] #Macao and HKG and Former USSR have 0 values in the dataset
+  x <- toolCountryFill(x[,,subtype], fill = 0) 
   
   #fill missing islands not in MissingIslands, using older James
-  old <- readSource("James", subtype=subtype)
+  old <- readSource("James", subtype = subtype)
   missing <- time_interpolate(old[c("ABW","PYF","NCL"),,], interpolated_year = c(1950:2019))
   x[c("ABW","PYF","NCL"),,] <- missing
   
   # use old HKG and MAC shares, and subtract from CHN
   # new james has much higher (double in earliest time steps)
   # historical china values
-  pop<-readSource("WDI",subtype = "SP.POP.TOTL")[c("CHN","HKG","MAC"),,]
+  pop <- readSource("WDI", subtype = "SP.POP.TOTL")[c("CHN","HKG","MAC"),,]
   oldyears <- intersect(getYears(pop), getYears(old))
   old <- pop[,oldyears,]*old[c("CHN","HKG","MAC"),oldyears,]
   old <- collapseNames(old)

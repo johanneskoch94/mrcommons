@@ -37,12 +37,13 @@ Depends:
     magclass(>= 3.17),
     madrat(>= 1.30),
 Imports:
-  SPEI,
-  WDI,
+  bezier,
   countrycode,
   data.table,
   dplyr,
-  rlang,
+  hdf5r,
+  GDPuc,
+  glue,
   lazyeval,
   lpjclass,
   luscale,
@@ -50,17 +51,21 @@ Imports:
   mstools,
   ncdf4,
   nleqslv,
+  purrr,
   quitte,
   raster,
   readr,
   readxl,
   reshape2,
+  rlang,
+  SPEI,
   stringr,
+  tibble,
   tidyr,
+  tidyselect,
+  WDI,
   XML,
-  zoo,
-  purrr,
-  hdf5r
+  zoo
 License: LGPL-3 | file LICENSE
 URL: https://github.com/pik-piam/mrcommons, https://doi.org/10.5281/zenodo.3822009
 BugReports: https://github.com/pik-piam/mrcommons/issues
