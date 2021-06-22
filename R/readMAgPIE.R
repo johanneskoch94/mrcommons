@@ -112,10 +112,10 @@ readMAgPIE<- function(subtype) {
     }
     getSets(x) <- setnames
     
-    # use data from SSP1 scenario for SPD scenario --- ATTENTION: needs to be deleted as soon as we have data for SDP
-    #x_SDP <- x[,,"SSP1",pmatch=TRUE]
-    #getNames(x_SDP) <- gsub("SSP1","SDP",getNames(x_SDP))
-    #x <- mbind(x,x_SDP)
+    # make SSP2Ariadne scenario using SSP2 data --- ATTENTION: needs to be deleted as soon as we have data for SSP2Ariadne
+    x_SSP2Ariadne <- x[,,"SSP2"]
+    getNames(x_SSP2Ariadne) <- gsub("SSP2", "SSP2Ariadne", getNames(x_SSP2Ariadne))
+    x <- mbind(x, x_SSP2Ariadne)
 
   } else {
     stop("Not a valid subtype!")

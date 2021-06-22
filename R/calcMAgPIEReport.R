@@ -84,9 +84,14 @@ calcMAgPIEReport <- function(subtype){
   getNames(x) <- gsub("C_SSP5-PkBudg1300-mag-4","SSP5-rcp26",getNames(x))
   getNames(x) <- gsub("C_SSP5-NDC-mag-4",       "SSP5-rcp45",getNames(x))
   getNames(x) <- gsub("C_SSP5-Base-mag-4",      "SSP5-none", getNames(x))
+
+  getNames(x) <- gsub("C_SSP2Ariadne-PkBudg900-mag-4",  "SSP2Ariadne-rcp20", getNames(x))
+  getNames(x) <- gsub("C_SSP2Ariadne-PkBudg1300-mag-4", "SSP2Ariadne-rcp26", getNames(x))
+  getNames(x) <- gsub("C_SSP2Ariadne-NDC-mag-4",        "SSP2Ariadne-rcp45", getNames(x))
+  getNames(x) <- gsub("C_SSP2Ariadne-Base-mag-4",       "SSP2Ariadne-none", getNames(x))
   
   # Introduce new SSP/SDP dimension by replacing "-" with "."
-  getNames(x) <- gsub("(SSP[0-9]|SDP)-","\\1.",getNames(x))
+  getNames(x) <- gsub("(SSP[0-9]|SDP|SSP2Ariadne)-", "\\1.", getNames(x))
   
   return(list(x           = x,
               weight      = NULL,

@@ -20,7 +20,7 @@ calcMacBaseLandUse <- function(subtype){
   source      <- c("co2luc" ,"n2oanwstm" ,"n2ofertin" ,"n2oanwstc" ,"n2ofertcr" ,"n2ofertsom" ,"n2ofertrb" ,"n2oanwstp" ,"n2oforest" ,"n2osavan" ,"n2oagwaste" ,"ch4rice" ,"ch4anmlwst" ,"ch4animals" ,"ch4forest" ,"ch4savan" ,"ch4agwaste")
 
   y <- new.magpie(cells_and_regions = iso_country$x, years = seq(2005,2150,5), names = source, sets = c("region","year","type"))
-  y <- add_dimension(y, dim = 3.2, add = "c_LU_emi_scen", nm = c("SSP1","SSP2","SSP5","SDP"))
+  y <- add_dimension(y, dim = 3.2, add = "c_LU_emi_scen", nm = c("SSP1", "SSP2", "SSP5", "SDP", "SSP2Ariadne"))
   y <- add_dimension(y, dim = 3.3, add = "rcp",           nm = c("rcp20","rcp26","rcp45","none"))
   
   if (subtype == "MAgPIE") {
@@ -35,7 +35,11 @@ calcMacBaseLandUse <- function(subtype){
     # make SDP scenario using SSP1 data
     x_SDP <- x[,,"SSP1"]
     getNames(x_SDP) <- gsub("SSP1","SDP",getNames(x_SDP))
-    x <- mbind(x,x_SDP)
+    x <- mbind(x, x_SDP)
+    # make SSP2Ariadne scenario using SSP2 data
+    x_SSP2Ariadne <- x[,,"SSP2"]
+    getNames(x_SSP2Ariadne) <- gsub("SSP2", "SSP2Ariadne", getNames(x_SSP2Ariadne))
+    x <- mbind(x, x_SSP2Ariadne)
     # Add missing rcp dimension (data only exists for Baseline=none, use Baseline data for RCPs)
     x <-add_dimension(x,dim=3.3,add="rcp",nm=c("rcp20","rcp26","rcp45","none"))
     getSets(x) <- c("region","year","type","c_LU_emi_scen","rcp")
@@ -159,6 +163,10 @@ calcMacBaseLandUse <- function(subtype){
     x_SDP <- x[,,"SSP1"]
     getNames(x_SDP) <- gsub("SSP1","SDP",getNames(x_SDP))
     x <- mbind(x,x_SDP)
+    # make SSP2riadne scenario using SSP2 data
+    x_SSP2Ariadne <- x[,,"SSP2"]
+    getNames(x_SSP2Ariadne) <- gsub("SSP2", "SSP2Ariadne", getNames(x_SSP2Ariadne))
+    x <- mbind(x, x_SSP2Ariadne)
     # Add missing rcp dimension (data only exists for Baseline=none, use Baseline data for RCPs)
     x <-add_dimension(x,dim=3.3,add="rcp",nm=c("rcp20","rcp26","rcp45","none"))
     getSets(x) <- c("region","year","type","c_LU_emi_scen","rcp")
