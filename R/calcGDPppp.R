@@ -34,7 +34,7 @@ calcGDPppp <- function(GDPpppCalib = c("fixHist_IMFgr_return2SSP", "Ariadne"),
                        GDPpppFuture = c("SSP_bezierOut_completed", "SSP2Ariadne_completed_bezierOut"),
                        FiveYearSteps = TRUE,
                        naming = "indicator_scenario") {
-  if (!(length(GDPpppCalib) == length(GDPpppPast) == length(GDPpppFuture))) {
+  if (!(length(GDPpppCalib) == length(GDPpppPast) && length(GDPpppCalib) == length(GDPpppFuture))) {
      stop("Arguments GDPpppCalib, GDPpppPast and GDPpppFuture are not the same length.")
   }
 

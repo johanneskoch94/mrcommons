@@ -23,7 +23,7 @@ calcPopulation <- function(PopulationCalib = c("past_grPEAP_grFuture", "Ariadne"
                            PopulationFuture = c("SSP2018Update_completed_bezierOut", "SSP2Ariadne_completed_bezierOut"), 
                            FiveYearSteps = TRUE, 
                            naming = "indicator_scenario") {
-  if (!(length(PopulationCalib) == length(PopulationPast) == length(PopulationFuture))) {
+  if (!(length(PopulationCalib) == length(PopulationPast) && length(PopulationCalib) == length(PopulationFuture))) {
      stop("Arguments PopulationCalib, PopulationPast and PopulationFuture are not the same length.")
   }
   
