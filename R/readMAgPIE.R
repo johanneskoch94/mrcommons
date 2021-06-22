@@ -13,7 +13,7 @@
 #' \dontrun{ a <- readSource(type="MAgPIE",subtype="EmiAPExo")
 #' }
 
-readMAgPIE<- function(subtype) {
+readMAgPIE <- function(subtype) {
   
   if (subtype == "EmiAirPoll") {
     x <- read.csv("emiAPexo.csv", row.names = 1)
@@ -116,6 +116,12 @@ readMAgPIE<- function(subtype) {
     x_SSP2Ariadne <- x[,,"SSP2"]
     getNames(x_SSP2Ariadne) <- gsub("SSP2", "SSP2Ariadne", getNames(x_SSP2Ariadne))
     x <- mbind(x, x_SSP2Ariadne)
+
+    x_SDP <- x[,,"SSP1"]
+    for (i in c("SDP_EI", "SDP_RC", "SDP_MC")) {
+       getNames(x_SDP) <- gsub("SSP1", i, getNames(x_SDP))
+       x <- mbind(x, x_SDP)
+    }
 
   } else {
     stop("Not a valid subtype!")

@@ -175,7 +175,7 @@ calcGDPpppPastEurostatWDI <- function(complete) {
                                 future = data)
 
   if (complete) {
-    fill <- readSource("MissingIslands", subtype = "pop", convert = FALSE)
+    fill <- readSource("MissingIslands", subtype = "gdp", convert = FALSE)
     data <- completeData(data, fill)
   }
 
