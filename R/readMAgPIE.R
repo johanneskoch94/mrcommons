@@ -119,7 +119,7 @@ readMAgPIE <- function(subtype) {
 
     x_SDP <- x[,,"SSP1"]
     for (i in c("SDP_EI", "SDP_RC", "SDP_MC")) {
-       getNames(x_SDP) <- gsub("SSP1", i, getNames(x_SDP))
+       getNames(x_SDP) <- gsub("SSP1", i, getNames(x[,,"SSP1"]))
        x <- mbind(x, x_SDP)
     }
 

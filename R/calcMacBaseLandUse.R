@@ -35,7 +35,7 @@ calcMacBaseLandUse <- function(subtype){
     # make SDP scenario using SSP1 data
     x_SDP <- x[,,"SSP1"]
     for (i in c("SDP", "SDP_EI", "SDP_RC", "SDP_MC")) {
-       getNames(x_SDP) <- gsub("SSP1", i, getNames(x_SDP))
+       getNames(x_SDP) <- gsub("SSP1", i, getNames(x[,,"SSP1"]))
        x <- mbind(x, x_SDP)
     }
     # make SSP2Ariadne scenario using SSP2 data
@@ -164,7 +164,7 @@ calcMacBaseLandUse <- function(subtype){
     # make SDP scenario using SSP1 data
     x_SDP <- x[,,"SSP1"]
     for (i in c("SDP", "SDP_EI", "SDP_RC", "SDP_MC")) {
-       getNames(x_SDP) <- gsub("SSP1", i, getNames(x_SDP))
+       getNames(x_SDP) <- gsub("SSP1", i, getNames(x[,,"SSP1"]))
        x <- mbind(x, x_SDP)
     }
     # make SSP2riadne scenario using SSP2 data
