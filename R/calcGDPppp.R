@@ -91,7 +91,7 @@ internal_calcGDPppp <- function(GDPpppCalib,
   if("gdp_SSP1" %in% getNames(combined) && !("gdp_SDP" %in% getNames(combined))){
     combined_SDP <- combined[,, "gdp_SSP1"]
     for  (i in c("SDP", "SDP_EI", "SDP_RC", "SDP_MC")) {
-      getNames(combined_SDP) <- gsub("gdp_SSP1", i, getNames(combined[,, "gdp_SSP1"]))
+      getNames(combined_SDP) <- gsub("SSP1", i, getNames(combined[,, "gdp_SSP1"]))
       combined <- mbind(combined, combined_SDP) 
     }
   }  

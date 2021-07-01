@@ -41,7 +41,7 @@ readIMF <- function(subtype = "current_account"){
     pivot_wider(names_from = .data$`Subject Descriptor`)  
   
   # Transform to magpie
-  out <- as.magpie(weo_data, spatial=1, temporal=2, datacol=3)
+  out <- as.magpie(weo_data)
   
   # TMP! Give names
   if (subtype == "current_account") {
