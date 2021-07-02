@@ -393,7 +393,7 @@ harmonizeFixHistIMFSSP <- function(past, future, yEnd) {
                     PopulationFuture = "SSP2018Update_completed",
                     FiveYearSteps = FALSE,
                     aggregate = FALSE)
-  pop <- pop[,,"pop_SDP",invert = TRUE]
+  pop <- pop[,, c("pop_SSP1", "pop_SSP2", "pop_SSP3", "pop_SSP4", "pop_SSP5")]
 
   getNames(combined_gdppc) <- getNames(pop)
   combined <- combined_gdppc * pop 

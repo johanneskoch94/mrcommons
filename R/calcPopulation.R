@@ -77,11 +77,13 @@ internal_calcPopulation <- function(PopulationCalib,
   # The function "finishingTouches" can be found in the file "helperFunctionsGDPandPopulation"
   combined <- finishingTouches(combined, future, FiveYearSteps, naming)
 
-  # Add SSP1plus/SDP scenario as copy of SSP1, might be substituted by real data later
+  # Add SDP, SDP_EI, SDP_RC and SDP_MC scenarios as copy of SSP1
   if("pop_SSP1" %in% getNames(combined) && !("pop_SDP" %in% getNames(combined))){
     combined_SDP <- combined[,, "pop_SSP1"]
-    getNames(combined_SDP) <- gsub("pop_SSP1", "pop_SDP", getNames(combined_SDP))
-    combined <- mbind(combined, combined_SDP) 
+    for  (i in c("SDP", "SDP_EI", "SDP_RC", "SDP_MC")) {
+      getNames(combined_SDP) <- gsub("SSP1", i, getNames(combined[,, "pop_SSP1"]))
+      combined <- mbind(combined, combined_SDP) 
+    }
   }  
   
   return(list(x = combined,
