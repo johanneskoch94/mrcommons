@@ -1,6 +1,6 @@
-# 
-# Helper functions for GDP and Population scenario construction
-#
+#' 
+#' Helper functions for GDP and Population scenario construction
+#'
 
 ###########################################
 # Extrapolation function to extend SSP series until 2150
@@ -469,3 +469,89 @@ convergeSpecial <- function(x) {
 
 
 
+###########################################
+#Additional functions to derive the SHAPE GDP scenarios from the SSP1 scenario
+
+# Note that here we label the GDP scenarios with their scenario abbreviations, 
+# and not with the name of the SHAPE economics dimensions. 
+
+# Mapping: Scenario <-> economics dimension
+# Economy-driven innovation (SDP_EI) <-> innovation-driven economy
+# Resilient communities (SDP_RC) <-> society-driven economy
+# Managing the global commons (SDP_MC) <-> service-driven economy
+
+# The two alternative SHAPE scenarios will re-use these GDP trajectories, so they are not explicitly included here.
+# Local solutions (SDP_LS) <-> society-driven economy (same as SDP_RC)
+# Green and social market economy (SDP_GS) <-> service-driven economy (same as SDP_MC)
+
+# for details see the SHAPE scenario spreadsheet
+# https://docs.google.com/spreadsheets/d/1v8dlZDj-AW8_oiyd9rdV3rGfVBt_PBCja1_NyEEFRMA/edit?usp=sharing
+###########################################
+
+# calculate modified growth rates and resulting gdp/capita in forward simulation
+compute_SHAPE_growth <- function(SHAPE_GDPscenario, gdppcap_SSP1){
+  
+  # calculation of growth rates
+  # assign average growth rate g_t of period t -> t+ timestep
+  # (timestep hard-coded to 5 years, thus only usable with FiveYearSteps = TRUE)
+  yrs <- getYears(gdppcap_SSP1, as.integer = TRUE)
+  timestep <- 5
+  growthrate_SSP1 <- 100* ((setYears(gdppcap_SSP1[,yrs[2:length(yrs)],],yrs[1:length(yrs)-1])/gdppcap_SSP1[,yrs[1:length(yrs)-1],])^(1./timestep) - 1)
+  
+  #modified growth rates and gdp/cap
+  growthrate <- setNames(as.magpie(growthrate_SSP1),SHAPE_GDPscenario)
+  gdppcap <- setNames(as.magpie(gdppcap_SSP1),SHAPE_GDPscenario)
+  gdppcap[,getYears(gdppcap, as.integer = T) > min(yrs),] <- NA
+  
+  for (yr in yrs[1:length(yrs)-1]){
+    # modify growth rates from 2020 onwards 
+    if (yr >= 2020){
+      # innovation-driven (SDP_EI): enhance growth rates for low-income countries by up to 15%
+      if (SHAPE_GDPscenario == "gdp_SDP_EI"){
+        modification_factor <- logistic_transition(gdppcap[,yr,], L0 = 1.15, L = 1, k = 20, x0 = 15e3, use_log10 = TRUE)
+      }
+      # service-driven (SDP_MC): growth rate reduced based on relative distance to technology frontier (given by the US)
+      else if (SHAPE_GDPscenario == "gdp_SDP_MC"){
+        # define US as technology frontier
+        frontier <- gdppcap["USA",yr,]
+        getRegions(frontier) <- "GLO"
+        # countries with gdp/cap above US are treated the same as the US -> set diff = 0
+        reldiff_to_frontier <- pmax((frontier[,yr,] - gdppcap[,yr,])/frontier[,yr,] , 0)
+        modification_factor <- logistic_transition(reldiff_to_frontier[,yr,], L0 = 1, L = 0.5, k = -30, x0 = 0.2, use_log10 = FALSE)
+      } 
+      # society-driven (SDP_RC): gradual transition to zero growth for high-income countries
+      else if (SHAPE_GDPscenario == "gdp_SDP_RC") {
+        modification_factor <- logistic_transition(gdppcap[,yr,], L0 = 1, L = 0, k = 10, x0 = 30e3, use_log10 = TRUE)
+      } else {
+        stop("cannot create SHAPE GDP scenarios: unknown scenario")
+      }
+      
+      # for service (SDP_MC) and society (SDP_RC) additionally add a smoothing for 2020 and 2025
+      # apply only 1/3 (2020) and 2/3 (2025) of the modification
+      if (SHAPE_GDPscenario %in% c("gdp_SDP_MC","gdp_SDP_RC")){
+        if (yr == 2020){
+          modification_factor[,yr,] <- 1/3.*(modification_factor[,yr,] - 1) + 1
+        } else if (yr == 2025) {
+          modification_factor[,yr,] <- 2/3.*(modification_factor[,yr,] - 1) + 1
+        }
+      }
+      growthrate[,yr,] <- growthrate[,yr,] * modification_factor[,yr,]
+    }
+    
+    # calculate next gdp/cap based on current value and (modified) growth rate
+    if (yr <= max(yrs) - timestep){
+      gdppcap[,yr+timestep,] <- gdppcap[,yr,]*(1 + growthrate[,yr,]/100.)^timestep
+    }
+  }
+  return(gdppcap)
+}
+
+# helper function: smooth transition from LO to L, with steepness k and midpoint x0
+logistic_transition <- function(x,L0,L,k,x0, use_log10 = FALSE){
+  if (use_log10){
+    x <- log10(x)
+    x0 <- log10(x0)
+  }
+  logistic <- 1./(1+exp(-k*(x-x0)))
+  return( L0 - (L0-L)*logistic )
+} 
