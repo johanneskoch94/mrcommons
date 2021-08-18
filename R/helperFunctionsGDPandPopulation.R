@@ -1,6 +1,6 @@
-#' 
-#' Helper functions for GDP and Population scenario construction
-#'
+# 
+# Helper functions for GDP and Population scenario construction
+#
 #' @importFrom dplyr lead
 
 ###########################################
