@@ -1,6 +1,7 @@
 #' 
 #' Helper functions for GDP and Population scenario construction
 #'
+#' @importFrom dplyr lead
 
 ###########################################
 # Extrapolation function to extend SSP series until 2150
@@ -489,23 +490,28 @@ convergeSpecial <- function(x) {
 ###########################################
 
 # calculate modified growth rates and resulting gdp/capita in forward simulation
-compute_SHAPE_growth <- function(SHAPE_GDPscenario, gdppcap_SSP1){
+compute_SHAPE_growth <- function(SHAPE_GDPscenario, gdppcap_SSP1, startFromYear){
   
   # calculation of growth rates
-  # assign average growth rate g_t of period t -> t+ timestep
-  # (timestep hard-coded to 5 years, thus only usable with FiveYearSteps = TRUE)
   yrs <- getYears(gdppcap_SSP1, as.integer = TRUE)
-  timestep <- 5
-  growthrate_SSP1 <- 100* ((setYears(gdppcap_SSP1[,yrs[2:length(yrs)],],yrs[1:length(yrs)-1])/gdppcap_SSP1[,yrs[1:length(yrs)-1],])^(1./timestep) - 1)
+  # flexible timestep
+  # TODO would be better to always use yearly timesteps in this computation, and select years afterwards
+  timestep <- new.magpie(years = yrs)
+  timestep[,,] <- dplyr::lead(yrs) - yrs
+  # assign average growth rate g_t of period t -> t+ timestep
+  # this means modifications of growth rate t will affect GDP in t+timestep
+  yrs_shifted <- yrs[2:length(yrs)]
+  yrs_base <- yrs[1:length(yrs)-1]
+  growthrate_SSP1 <- 100* ((setYears(gdppcap_SSP1[,yrs_shifted,],yrs_base)/gdppcap_SSP1[,yrs_base,])^(1./timestep[,yrs_base,]) - 1)
   
   #modified growth rates and gdp/cap
   growthrate <- setNames(as.magpie(growthrate_SSP1),SHAPE_GDPscenario)
   gdppcap <- setNames(as.magpie(gdppcap_SSP1),SHAPE_GDPscenario)
-  gdppcap[,getYears(gdppcap, as.integer = T) > min(yrs),] <- NA
+  gdppcap[,yrs > startFromYear,] <- NA
   
   for (yr in yrs[1:length(yrs)-1]){
-    # modify growth rates from 2020 onwards 
-    if (yr >= 2020){
+    # modify growth rates only for future period (default: from 2020 onwards) 
+    if (yr >= startFromYear){
       # innovation-driven (SDP_EI): enhance growth rates for low-income countries by up to 15%
       if (SHAPE_GDPscenario == "gdp_SDP_EI"){
         modification_factor <- logistic_transition(gdppcap[,yr,], L0 = 1.15, L = 1, k = 20, x0 = 15e3, use_log10 = TRUE)
@@ -526,12 +532,12 @@ compute_SHAPE_growth <- function(SHAPE_GDPscenario, gdppcap_SSP1){
         stop("cannot create SHAPE GDP scenarios: unknown scenario")
       }
       
-      # for service (SDP_MC) and society (SDP_RC) additionally add a smoothing for 2020 and 2025
-      # apply only 1/3 (2020) and 2/3 (2025) of the modification
+      # for service (SDP_MC) and society (SDP_RC) additionally add a smoothing for 2020 and 2025 timesteps
+      # apply only 1/3 (2020-2024) and 2/3 (2025-2029) of the modification
       if (SHAPE_GDPscenario %in% c("gdp_SDP_MC","gdp_SDP_RC")){
-        if (yr == 2020){
+        if (yr >= 2020 && yr < 2025){
           modification_factor[,yr,] <- 1/3.*(modification_factor[,yr,] - 1) + 1
-        } else if (yr == 2025) {
+        } else if (yr >= 2025 && yr < 2030) {
           modification_factor[,yr,] <- 2/3.*(modification_factor[,yr,] - 1) + 1
         }
       }
@@ -539,9 +545,7 @@ compute_SHAPE_growth <- function(SHAPE_GDPscenario, gdppcap_SSP1){
     }
     
     # calculate next gdp/cap based on current value and (modified) growth rate
-    if (yr <= max(yrs) - timestep){
-      gdppcap[,yr+timestep,] <- gdppcap[,yr,]*(1 + growthrate[,yr,]/100.)^timestep
-    }
+    gdppcap[,yr+as.integer(timestep[,yr,]),] <- gdppcap[,yr,]*(1 + growthrate[,yr,]/100.)^timestep[,yr,]
   }
   return(gdppcap)
 }

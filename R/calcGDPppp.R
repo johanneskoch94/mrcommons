@@ -89,20 +89,20 @@ internal_calcGDPppp <- function(GDPpppCalib,
        
   # Add SDP, and SHAPE scenarios SDP_EI, SDP_RC and SDP_MC scenarios as copies/variants of SSP1
   # SHAPE scenarios are calculated in 5-year steps
-  if (FiveYearSteps && "gdp_SSP1" %in% getNames(combined) && !("gdp_SDP" %in% getNames(combined))){
+  if ("gdp_SSP1" %in% getNames(combined) && !("gdp_SDP" %in% getNames(combined))){
     
     # standard SDP inherits SSP1 GDP
     combined_SDP <- combined[,, "gdp_SSP1"]
     getNames(combined_SDP) <- gsub("SSP1", "SDP", getNames(combined_SDP))
     
     # SHAPE SDP_XX variants are calculated as modifications of SSP1 GDP/cap growth rates
-    # TODO not very elegant to make the full call to Population here
-    pop <- calcOutput("Population", aggregate = FALSE, FiveYearSteps = TRUE)
+    # TODO is there a more elegant way to avoid the back and forth between GDP and GDP/capita?
+    pop <- calcOutput("Population", aggregate = FALSE, FiveYearSteps = FiveYearSteps)
     gdppcap_SSP1 <- combined[,,"gdp_SSP1"]/setNames(pop[,,"pop_SSP1"],"gdp_SSP1")
     
     # The function "compute_SHAPE_growth" can be found in the file "helperFunctionsGDPandPopulation"
     gdppcap_SHAPE <- 
-      lapply(c("gdp_SDP_EI","gdp_SDP_MC","gdp_SDP_RC"), compute_SHAPE_growth, gdppcap_SSP1 = gdppcap_SSP1) %>% 
+      lapply(c("gdp_SDP_EI","gdp_SDP_MC","gdp_SDP_RC"), compute_SHAPE_growth, gdppcap_SSP1 = gdppcap_SSP1, startFromYear = 2020) %>% 
       mbind()
     
     # scale back to GDP
