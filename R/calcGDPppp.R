@@ -43,7 +43,7 @@ calcGDPppp <- function(GDPpppCalib = c("fixHist_IMFgr_return2SSP", "Ariadne"),
   purrr::reduce(~ list(x = mbind(.x$x, .y$x),
                        weight = NULL,
                        unit = "million",
-                       description = glue::glue("{.x$description} \n {.y$description}")))
+                       description = glue::glue("{.x$description} || {.y$description}")))
 
 }
 
@@ -75,10 +75,10 @@ internal_calcGDPppp <- function(GDPpppCalib,
                         "past_transition" = glue::glue("use past data and afterwards transition between \\
                                                        {GDPpppPast} and {GDPpppFuture} with a transition \\
                                                        period until 2050"),
-                        "fixHist_IMFgr_return2SSP" = glue::glue("use past data, short term growth rates from IMF and\\ 
+                        "fixHist_IMFgr_return2SSP" = glue::glue("use past data, short term growth rates from IMF and \\
                                                                 afterwards transition between {GDPpppPast} and \\
                                                                 {GDPpppFuture} with a transition period until 2100"),
-                        "Ariadne" = glue::glue("use past data, short term growth rates from IMF and\\ 
+                        "Ariadne" = glue::glue("use past data, short term growth rates from IMF and \\
                                                 afterwards transition between {GDPpppPast} and \\
                                                 {GDPpppFuture} with a transition period until 2100. \\
                                                 For EUR/ARIADNE countries, just glue past with future and \\

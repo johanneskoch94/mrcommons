@@ -2,7 +2,8 @@
 convertARIADNE_ReferenceScenario <- function(x, subtype){
 
   # Convert region codons from Eurostat to iso3c
-  getRegions(x) <- countrycode(getRegions(x), "eurostat", "iso3c")
+  og_cc <- if(subtype == "population") "iso2c" else "eurostat"
+  getRegions(x) <- countrycode(getRegions(x), og_cc, "iso3c")
 
   if (subtype %in% c("gdp", "gdp_corona")) {
     # Convert currency: 

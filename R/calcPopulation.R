@@ -32,7 +32,7 @@ calcPopulation <- function(PopulationCalib = c("past_grPEAP_grFuture", "Ariadne"
   purrr::reduce(~ list(x = mbind(.x$x, .y$x),
                        weight = NULL,
                        unit = "million",
-                       description = glue::glue("{.x$description} \n {.y$description}")))
+                       description = glue::glue("{.x$description} || {.y$description}")))
 }
 
 

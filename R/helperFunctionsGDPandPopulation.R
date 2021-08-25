@@ -1,7 +1,4 @@
-#' 
-#' Helper functions for GDP and Population scenario construction
-#'
-#' @importFrom dplyr lead
+# Helper functions for GDP and Population scenario construction
 
 ###########################################
 # Extrapolation function to extend SSP series until 2150
