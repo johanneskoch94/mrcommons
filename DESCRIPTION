@@ -1,8 +1,8 @@
 Package: mrcommons
 Type: Package
 Title: MadRat commons Input Data Library
-Version: 0.58.0
-Date: 2021-08-20
+Version: 0.61.2
+Date: 2021-09-01
 Authors@R: c(person("Benjamin Leon", "Bodirsky", email = "bodirsky@pik-potsdam.de", role = "aut"),
              person("Kristine", "Karstens", role = "aut"),
              person("Lavinia", "Baumstark", role = "aut"),
@@ -36,7 +36,8 @@ Description: Provides useful functions and a common structure to all the input d
 Depends:
     R(>= 2.10.0),
     magclass(>= 3.17),
-    madrat(>= 1.30),
+    madrat(>= 2.2.1),
+    mstools
 Imports:
   bezier,
   countrycode,
@@ -49,8 +50,7 @@ Imports:
   lazyeval,
   lpjclass,
   luscale,
-  magpiesets,
-  mstools,
+  magpiesets(>= 0.44.2),
   ncdf4,
   nleqslv,
   purrr,
@@ -67,7 +67,10 @@ Imports:
   tidyselect,
   WDI,
   XML,
-  zoo
+  zoo,
+  purrr,
+  hdf5r,
+  GDPuc
 License: LGPL-3 | file LICENSE
 URL: https://github.com/pik-piam/mrcommons, https://doi.org/10.5281/zenodo.3822009
 BugReports: https://github.com/pik-piam/mrcommons/issues
@@ -79,6 +82,9 @@ Suggests:
     testthat,
     rmarkdown,
     covr,
-    Rilostat
+    Rilostat,
+    HARr
 VignetteBuilder: knitr
-Remotes: hhoeflin/hdf5r
+Remotes:
+    hhoeflin/hdf5r,
+    USDA-ERS/MTED-HARr
