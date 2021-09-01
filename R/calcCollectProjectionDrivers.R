@@ -1,6 +1,6 @@
 #' Collect Projection Drivers
 #' @param driver Driver to collect. Defaults to "all".
-#' @importFrom magclass getNames<- place_x_in_y
+#' @importFrom magclass getNames<- 
 calcCollectProjectionDrivers <- function(driver = "all"){
   
   if(driver != "all"){
