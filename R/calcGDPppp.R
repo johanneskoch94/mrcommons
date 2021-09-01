@@ -97,7 +97,7 @@ internal_calcGDPppp <- function(GDPpppCalib,
     
     # SHAPE SDP_XX variants are calculated as modifications of SSP1 GDP/cap growth rates
     # TODO is there a more elegant way to avoid the back and forth between GDP and GDP/capita?
-    pop <- calcOutput("Population", aggregate = FALSE, FiveYearSteps = FiveYearSteps)
+    pop <- calcOutput("Population", aggregate = FALSE, FiveYearSteps = FiveYearSteps)[, getYears(combined, as.integer = TRUE), ]
     gdppcap_SSP1 <- combined[,,"gdp_SSP1"]/setNames(pop[,,"pop_SSP1"],"gdp_SSP1")
     
     # The function "compute_SHAPE_growth" can be found in the file "helperFunctionsGDPandPopulation"
