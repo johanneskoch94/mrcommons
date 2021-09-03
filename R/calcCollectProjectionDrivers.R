@@ -9,8 +9,8 @@ calcCollectProjectionDrivers <- function(driver = "all"){
   } else {
 
     ## add education indicators
-    pop_ssp_sres <- calcOutput("Population", aggregate = FALSE, naming = "indicator.scenario")
-    gdp_ssp_sres <- calcOutput("GDPppp", aggregate = FALSE, naming = "indicator.scenario")
+    pop_ssp_sres <- calcOutput("Population", aggregate = FALSE)
+    gdp_ssp_sres <- calcOutput("GDPppp", aggregate = FALSE)
     
     # Convert from 2005 Int$PPP to 2005 US$MER, and use regional averages when conversion factors are missing
     regmap <- toolGetMapping("regionmappingH12.csv") %>% 
@@ -23,16 +23,15 @@ calcCollectProjectionDrivers <- function(driver = "all"){
                                           with_regions = regmap,
                                           replace_NAs = "regional_average")
     
-    getNames(gdp_ssp_sres_mer, dim = 1) <- "gdpmer"
+    getNames(gdp_ssp_sres_mer, dim = 1) <-  gsub("gdp", "gdpmer", getNames(gdp_ssp_sres_mer, dim=1))
     
     urban_shr_ssp <- calcOutput("Urban", 
                                 UrbanCalib = "past", 
                                 UrbanPast = "WDI", 
                                 UrbanFuture = "SSP",
-                                aggregate = FALSE,
-                                naming = "indicator.scenario") 
+                                aggregate = FALSE) 
     urban_ssp <- urban_shr_ssp*pop_ssp_sres[,,getNames(urban_shr_ssp)]
-    getNames(urban_ssp, dim = 1) <- "urban"
+    getNames(urban_ssp, dim = 1) <- gsub("pop", "urban", getNames(urban_ssp, dim=1))
     
     # Demographics
     #Lutz<-calcOutput("Demography",education=FALSE,aggregate=FALSE)  #No division into education groups (due to eductaion=FALSE)
@@ -43,10 +42,11 @@ calcCollectProjectionDrivers <- function(driver = "all"){
       pop_ssp_sres,
       gdp_ssp_sres,
       gdp_ssp_sres_mer,
-      urban_ssp
-      #population
-    )
-  }
+      urban_ssp)
+      #population)
+
+  getNames(combined) <-  sub("_", ".", getNames(combined))  
+      }
   
   if (driver == "gdp"){
     unit <- "Mio USD 05"  
